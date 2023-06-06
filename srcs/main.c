@@ -114,11 +114,33 @@ void tr_map(t_var *var)
 void    print_solution(t_var *var)
 {
     int i;
+    int j;
+    int index;
     
     i = -1;
+    j = 0;
+    index = 0;
     printf("\n\ntranslated solution\n");
     while (++i < var->num_lines)
         printf("\nvar->maze_map[%d]\t:\t%s", i, var->maze_map[i]);
+    i = -1;
+    printf("\n\nfinal solution\n");
+    i = 0;
+    while (i < var->num_lines)
+    {
+        j = 0;
+        while (j < var->num_lines)
+        {
+            if (var->maze_map[i][j] == '2' || var->maze_map[i][j] == '5')
+            {
+                index = (i * (var->num_lines + 1)) + j;
+                var->maze_string[index] = 'O';
+            }                
+            j++;
+        }
+        i++;
+    }
+    printf("\n%s\n", var->maze_string);
     return ;
 }
 
