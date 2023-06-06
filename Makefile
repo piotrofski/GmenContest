@@ -13,7 +13,7 @@ SRC_FILES = ${addprefix ${DIR_SRCS}, ${SRCS}}
 
 OBJ_FILES = ${addprefix ${DIR_SRCS}, ${OBJS}}
 
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -g
 
 CC = cc
 

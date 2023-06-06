@@ -62,16 +62,29 @@ void    splitting(t_var *var)
     return ;
 }
 
+void update_map(t_var *var, int i, int j)
+{
+    int count_obs;
+
+    count_obs = 0;
+    if (var->maze_map[i][j] == '5')
+        return ;
+    if (var->maze_map[i][j + 1] == '#')
+        count_obs++;
+    if (var->maze_map[i][j - 1] == '#')
+        count_obs++;
+    if (var->maze_map[i + 1][j] == '#')
+        count_obs++;
+    if (var->maze_map[i - 1][j] == '#')
+        count_obs++;
+    var->maze_map[i][j] = (4 - count_obs) + '0';
+    return ;
+}
+
 void tr_map(t_var *var)
 {
     int i;
-    int count_obs;
     int j;
-
-    //var->maze_map[var->num_lines - 2][1] = 'O'; //start coordinates
-    //var->maze_map[1][var->num_lines - 2] = 'O'; //end coordinates
-    //var->maze_map[var->num_lines - 2][var->num_lines - 2] = 'O'; //botr coordinates
-    //var->maze_map[1][1] = 'O'; //topl coordinates
 
     i = -1;
     while (++i < var->num_lines)
@@ -80,24 +93,11 @@ void tr_map(t_var *var)
     j = 1;
     while (i < var->num_lines - 1)
     {
-        count_obs = 0;
         j = 1;
         while (j < var->num_lines - 1)
         {
             if (var->maze_map[i][j] != '#')
-            {
-                if (var->maze_map[i][j + 1] == '#')
-                    count_obs++;
-                if (var->maze_map[i][j - 1] == '#')
-                    count_obs++;
-                if (var->maze_map[i + 1][j] == '#')
-                    count_obs++;
-                if (var->maze_map[i - 1][j] == '#')
-                    count_obs++;
-                //var->tr_maze_map[i][j] = 4 - count_obs;
-                var->maze_map[i][j] = (4 - count_obs) + '0';
-                count_obs = 0;
-            }
+                update_map(var, i, j);
             j++;
         }
         i++;
@@ -108,6 +108,60 @@ void tr_map(t_var *var)
     i = -1;
     while (++i < var->num_lines)
         printf("\nvar->maze_map[%d]\t:\t%s", i, var->maze_map[i]);
+    return ;
+}
+
+void    print_solution(t_var *var)
+{
+    int i;
+    
+    i = -1;
+    printf("\n\ntranslated solution\n");
+    while (++i < var->num_lines)
+        printf("\nvar->maze_map[%d]\t:\t%s", i, var->maze_map[i]);
+    return ;
+}
+
+void    resolve(t_var *var)
+{
+    int i;
+    int j;
+    int flag;
+
+    i = 1;
+    j = 1;
+    flag = 0;
+    while (flag != 1)
+    {
+        flag = 1;
+        i = 1;
+        while (i < var->num_lines - 1)
+        {
+            j = 1;
+            while (j < var->num_lines - 1)
+            {
+                if ((var->maze_map[i][j] != '#') && (var->maze_map[i][j] != '5'))
+                {
+                    if (var->maze_map[i][j] == '1')
+                    {
+                        var->maze_map[i][j] = '#';
+                        if (var->maze_map[i][j + 1] != '#') 
+                            update_map(var, i, j + 1);
+                        else if (var->maze_map[i][j - 1] != '#') 
+                            update_map(var, i, j - 1);
+                        else if (var->maze_map[i + 1][j] != '#') 
+                            update_map(var, i + 1, j);
+                        else if (var->maze_map[i - 1][j] != '#') 
+                            update_map(var, i - 1, j);
+                    }
+                    if (var->maze_map[i][j] != '2' && var->maze_map[i][j] != '5')
+                        flag = 0;
+                }
+                j++;
+            }
+            i++;
+        }
+    }
     return ;
 }
 
@@ -123,12 +177,15 @@ int main(int argc, char **argv)
     
         start_time = clock();
         dimension = (dimension < 0) ? -dimension : dimension; //args error check
+
         if (getReadURL(dimension, &var) == 1) //writes in the terminal & in the maze_file
             return (0);
-        end_time = clock();
         printf("\n%s\n", var.maze_string);
         splitting(&var);
         tr_map(&var);
+        resolve(&var);
+        print_solution(&var);
+        end_time = clock();
         execution_time = (double)(end_time - start_time) / CLOCKS_PER_SEC;
         printf("\nExecution time: %.4f seconds\n", execution_time);
     }
