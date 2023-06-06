@@ -13,13 +13,13 @@ size_t write_callback(char *ptr, size_t size, size_t nmemb, void *userdata)
     return total_size;
 }
 
-int getReadURL(int dimension, t_var *var)
+int getReadURL(int dimension, t_var *var, int density)
 {
     CURL* curl;
     CURLcode res;
     char url[100];
 
-    snprintf(url, sizeof(url), "https://mazing.pythonanywhere.com/%d", dimension);
+    snprintf(url, sizeof(url), "https://mazing.pythonanywhere.com/imperfect/%d/%d", dimension, density);
     curl_global_init(CURL_GLOBAL_DEFAULT);
     curl = curl_easy_init();
     if (curl)
@@ -189,18 +189,19 @@ void    resolve(t_var *var)
 
 int main(int argc, char **argv)
 {
-    if (argc == 2)
+    if (argc == 3)
     {
         clock_t start_time;
         clock_t end_time;
         double execution_time;
         int dimension = atoi(argv[1]);
+        int density = atoi(argv[2]);
         t_var var;
     
         start_time = clock();
         dimension = (dimension < 0) ? -dimension : dimension; //args error check
 
-        if (getReadURL(dimension, &var) == 1) //writes in the terminal & in the maze_file
+        if (getReadURL(dimension, &var, density) == 1) //writes in the terminal & in the maze_file
             return (0);
         printf("\n%s\n", var.maze_string);
         splitting(&var);
@@ -212,6 +213,6 @@ int main(int argc, char **argv)
         printf("\nExecution time: %.4f seconds\n", execution_time);
     }
     else
-        printf("Please write the dimension of the maze such as: ./a.out X\n");
+        printf("Please write the dimension(positive integer) and density(float between 0 and 1) of the maze such as: ./a.out X X\n");
     return (0);
 }

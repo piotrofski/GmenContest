@@ -18,6 +18,6 @@ typedef struct s_var
 
 char **ft_split(char *str, char *charset);
 size_t write_callback(char *ptr, size_t size, size_t nmemb, void *userdata);
-int getReadURL(int dimension, t_var *var);
+int getReadURL(int dimension, t_var *var, int density);
 
 #endif
