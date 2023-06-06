@@ -46,7 +46,7 @@ int getReadURL(int dimension, t_var *var)
 void    splitting(t_var *var)
 {
     int i;
-    
+
     i = 0;
     var->num_lines = 0;
     while (var->maze_string[i] != '\0')
@@ -57,9 +57,55 @@ void    splitting(t_var *var)
     }
     var->num_lines++;
     printf("\nnum_lines = %d", var->num_lines);
-    var->maze_map = ft_split(var->maze_string, "\n");        
-    i = -1;
+    var->maze_map = ft_split(var->maze_string, "\n");
     printf("\n");
+    return ;
+}
+
+void tr_map(t_var *var)
+{
+    int i;
+    int count_obs;
+    int j;
+
+    //var->maze_map[var->num_lines - 2][1] = 'O'; //start coordinates
+    //var->maze_map[1][var->num_lines - 2] = 'O'; //end coordinates
+    //var->maze_map[var->num_lines - 2][var->num_lines - 2] = 'O'; //botr coordinates
+    //var->maze_map[1][1] = 'O'; //topl coordinates
+
+    i = -1;
+    while (++i < var->num_lines)
+        printf("\nvar->maze_map[%d]\t:\t%s", i, var->maze_map[i]);
+    i = 1;
+    j = 1;
+    while (i < var->num_lines - 1)
+    {
+        count_obs = 0;
+        j = 1;
+        while (j < var->num_lines - 1)
+        {
+            if (var->maze_map[i][j] != '#')
+            {
+                if (var->maze_map[i][j + 1] == '#')
+                    count_obs++;
+                if (var->maze_map[i][j - 1] == '#')
+                    count_obs++;
+                if (var->maze_map[i + 1][j] == '#')
+                    count_obs++;
+                if (var->maze_map[i - 1][j] == '#')
+                    count_obs++;
+                //var->tr_maze_map[i][j] = 4 - count_obs;
+                var->maze_map[i][j] = (4 - count_obs) + '0';
+                count_obs = 0;
+            }
+            j++;
+        }
+        i++;
+    }
+    var->maze_map[var->num_lines - 2][1] = '5';
+    var->maze_map[1][var->num_lines - 2] = '5';
+    printf("\n\ntranslated\n");
+    i = -1;
     while (++i < var->num_lines)
         printf("\nvar->maze_map[%d]\t:\t%s", i, var->maze_map[i]);
     return ;
@@ -82,6 +128,7 @@ int main(int argc, char **argv)
         end_time = clock();
         printf("\n%s\n", var.maze_string);
         splitting(&var);
+        tr_map(&var);
         execution_time = (double)(end_time - start_time) / CLOCKS_PER_SEC;
         printf("\nExecution time: %.4f seconds\n", execution_time);
     }
