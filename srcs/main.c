@@ -7,9 +7,10 @@ size_t write_callback(char *ptr, size_t size, size_t nmemb, void *userdata)
     
     var = (t_var*)userdata;
     total_size = size * nmemb;
+    free(var->maze_string);
     var->maze_string = malloc(sizeof(char) * (total_size + 1));
     memcpy(var->maze_string, ptr, total_size);
-    var->maze_string[total_size] = '\0';  // Ensure null-termination
+    var->maze_string[total_size] = '\0';  
     return total_size;
 }
 
@@ -69,14 +70,26 @@ void update_map(t_var *var, int i, int j)
     count_obs = 0;
     if (var->maze_map[i][j] == '5')
         return ;
-    if (var->maze_map[i][j + 1] == '#')
-        count_obs++;
-    if (var->maze_map[i][j - 1] == '#')
-        count_obs++;
-    if (var->maze_map[i + 1][j] == '#')
-        count_obs++;
-    if (var->maze_map[i - 1][j] == '#')
-        count_obs++;
+    if (j != var->num_lines)
+    {
+        if (var->maze_map[i][j + 1] == '#')
+            count_obs++;
+    }
+    if (j != 0)
+    {
+        if (var->maze_map[i][j - 1] == '#' && j != 0)
+            count_obs++;
+    }
+    if (i != var->num_lines)
+    {
+        if (var->maze_map[i + 1][j] == '#' && i != var->num_lines)
+            count_obs++;
+    }
+    if (i != 0)
+    {
+        if (var->maze_map[i - 1][j] == '#'&& i != 0)
+            count_obs++;
+    }
     var->maze_map[i][j] = (4 - count_obs) + '0';
     return ;
 }
