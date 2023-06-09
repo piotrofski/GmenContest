@@ -8,6 +8,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <time.h>
+#include <limits.h>
 
 typedef struct s_var
 {
@@ -18,6 +19,5 @@ typedef struct s_var
 
 char **ft_split(char *str, char *charset);
 size_t write_callback(char *ptr, size_t size, size_t nmemb, void *userdata);
-int getReadURL(int dimension, t_var *var, int density);
 
 #endif

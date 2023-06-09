@@ -1,16 +1,29 @@
 #include "../includes/header.h"
 
+
 size_t write_callback(char *ptr, size_t size, size_t nmemb, void *userdata)
 {
     size_t total_size; 
+    size_t current_size;
+    size_t new_size;
     t_var *var;
     
     var = (t_var*)userdata;
+    printf("\nsize %ld\nnmemb: %ld\n", size, nmemb);
     total_size = size * nmemb;
-    free(var->maze_string);
-    var->maze_string = malloc(sizeof(char) * (total_size + 1));
-    memcpy(var->maze_string, ptr, total_size);
-    var->maze_string[total_size] = '\0';  
+    printf ("\ntotal_size: %ld\n", total_size);
+    current_size = strlen(var->maze_string);
+    printf("\ncurrent_size\t%ld\n", current_size);
+    new_size = current_size + total_size;
+    printf("\nnew_size\t%ld\n", new_size);
+    var->maze_string = realloc(var->maze_string, new_size + 1);
+    if (var->maze_string == NULL) {
+        fprintf(stderr, "Failed to allocate memory\n");
+        return 0;
+    }
+    memcpy(var->maze_string + current_size, ptr, total_size);
+    var->maze_string[new_size] = '\0';
+
     return total_size;
 }
 
@@ -99,9 +112,9 @@ void tr_map(t_var *var)
     int i;
     int j;
 
-    i = -1;
-    while (++i < var->num_lines)
-        printf("\nvar->maze_map[%d]\t:\t%s", i, var->maze_map[i]);
+    //i = -1;
+    //while (++i < var->num_lines)
+    //    printf("\nvar->maze_map[%d]\t:\t%s", i, var->maze_map[i]);
     i = 1;
     j = 1;
     while (i < var->num_lines - 1)
@@ -133,11 +146,11 @@ void    print_solution(t_var *var)
     i = -1;
     j = 0;
     index = 0;
-    printf("\n\ntranslated solution\n");
-    while (++i < var->num_lines)
-        printf("\nvar->maze_map[%d]\t:\t%s", i, var->maze_map[i]);
-    i = -1;
-    printf("\n\nfinal solution\n");
+    // printf("\n\ntranslated solution\n");
+    // while (++i < var->num_lines)
+        // printf("\nvar->maze_map[%d]\t:\t%s", i, var->maze_map[i]);
+    // i = -1;
+    // printf("\n\nfinal solution\n");
     i = 0;
     while (i < var->num_lines)
     {
