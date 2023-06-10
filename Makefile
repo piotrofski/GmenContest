@@ -2,6 +2,8 @@ NAME = exec
 
 SRCS = main.c \
 	ft_split.c\
+	get_url.c\
+	operations.c\
 
 OBJS = ${SRCS:.c=.o}
 
